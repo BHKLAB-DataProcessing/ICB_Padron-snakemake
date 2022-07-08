@@ -5,6 +5,7 @@ input_dir <- args[1]
 output_dir <- args[2]
 
 source("https://raw.githubusercontent.com/BHKLAB-Pachyderm/ICB_Common/main/code/Get_Response.R")
+source("https://raw.githubusercontent.com/BHKLAB-Pachyderm/ICB_Common/main/code/format_clin_data.R")
 
 #############################################################################
 #############################################################################
@@ -25,7 +26,9 @@ clin[ , "clinical.observation.pfs" ] <- as.numeric( as.character( clin[ , "clini
 
 clin = clin[ clin$Arm %in% c( "A1" , "C2") , ]
 
-clin = as.data.frame( cbind( clin[ , c( "Deidentified.ID" , "Sex" , "Age" , "clinical.observation.os", "clinical.observation.os.event", "clinical.observation.pfs", "clinical.observation.pfs.event" ) ] , "PD-1/PD-L1" , "Pancreas" , NA , NA , NA , NA , NA , NA , NA , NA ) )
+clin_original <- clin
+selected_cols <- c( "Deidentified.ID" , "Sex" , "Age" , "clinical.observation.os", "clinical.observation.os.event", "clinical.observation.pfs", "clinical.observation.pfs.event" ) 
+clin = as.data.frame( cbind( clin[ , selected_cols ] , "PD-1/PD-L1" , "Pancreas" , NA , NA , NA , NA , NA , NA , NA , NA ) )
 colnames(clin) = c( "patient" , "sex" , "age" , "t.os" , "os" , "t.pfs" , "pfs" , "drug_type" , "primary" , "response" , "recist" , "histo" , "response" , "stage" , "response.other.info" , "dna" , "rna" )
 
 clin$patient = sapply( clin$patient , function( x ){ paste( unlist( strsplit( x , "-" , fixed = TRUE )) , collapse = "." ) } ) 
@@ -37,6 +40,7 @@ clin$response = Get_Response( data=clin )
 clin$rna = "tpm"
 clin = clin[ , c("patient" , "sex" , "age" , "primary" , "histo" , "stage" , "response.other.info" , "recist" , "response" , "drug_type" , "dna" , "rna" , "t.pfs" , "pfs" , "t.os" , "os" ) ]
 
+clin <- format_clin_data(clin_original, 'Deidentified.ID', selected_cols, clin)
 
 #####################################################################
 #####################################################################
