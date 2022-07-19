@@ -12,7 +12,7 @@ source("https://raw.githubusercontent.com/BHKLAB-Pachyderm/ICB_Common/main/code/
 ## Get Clinical data
 
 
-clin = read.table( file = file.path(input_dir, "PICI0002_ph2_clinical.csv") , sep=";" , header=TRUE , stringsAsFactors=FALSE )
+clin = read.table( file = file.path(input_dir, "PICI0002_ph2_clinical.csv") , sep="," , header=TRUE , stringsAsFactors=FALSE )
 clin$Deidentified.ID = paste0( 'P' , clin$Deidentified.ID )
 rownames( clin ) = clin$Deidentified.ID
 
