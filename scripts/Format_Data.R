@@ -64,6 +64,10 @@ expr = as.data.frame( tpm[ , -1 ] )
 patient = intersect( colnames(expr) , rownames(clin) )
 clin = clin[ patient , ]
 expr =  expr[ , patient ]
+rows <- rownames(expr)
+expr <- sapply(expr, as.numeric)
+expr <- log2(expr + 0.001)
+rownames(expr) <- rows
 
 # save( clin , expr , file=file.path(output_dir, "Padron.RData") )
 
