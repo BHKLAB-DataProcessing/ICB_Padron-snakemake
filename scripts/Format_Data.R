@@ -1,17 +1,19 @@
 library(data.table)
+library(tibble)
 
 args <- commandArgs(trailingOnly = TRUE)
 input_dir <- args[1]
 output_dir <- args[2]
+annot_dir <- args[3]
 
 source("https://raw.githubusercontent.com/BHKLAB-Pachyderm/ICB_Common/main/code/Get_Response.R")
 source("https://raw.githubusercontent.com/BHKLAB-Pachyderm/ICB_Common/main/code/format_clin_data.R")
+source("https://raw.githubusercontent.com/BHKLAB-Pachyderm/ICB_Common/main/code/annotate_tissue.R")
+source("https://raw.githubusercontent.com/BHKLAB-Pachyderm/ICB_Common/main/code/annotate_drug.R")
 
 #############################################################################
 #############################################################################
 ## Get Clinical data
-
-
 clin = read.table( file = file.path(input_dir, "PICI0002_ph2_clinical.csv") , sep="," , header=TRUE , stringsAsFactors=FALSE )
 clin$Deidentified.ID = paste0( 'P' , clin$Deidentified.ID )
 rownames( clin ) = clin$Deidentified.ID
@@ -73,6 +75,12 @@ rownames(expr) <- rows
 
 case = cbind( patient , 0 , 0 , 1 )
 colnames(case ) = c( "patient" , "snv" , "cna" , "expr" )
+
+# Tissue and drug annotation
+annotation_tissue <- read.csv(file=file.path(annot_dir, 'curation_tissue.csv'))
+clin <- annotate_tissue(clin=clin, study='Padron', annotation_tissue=annotation_tissue, check_histo=FALSE)
+
+clin <- add_column(clin, unique_drugid='', .after='unique_tissueid')
 
 write.table( case , file = file.path(output_dir, "cased_sequenced.csv") , sep = ";" , quote = FALSE , row.names = FALSE)
 write.table( clin , file = file.path(output_dir, "CLIN.csv") , sep = ";" , quote = FALSE , row.names = FALSE)
