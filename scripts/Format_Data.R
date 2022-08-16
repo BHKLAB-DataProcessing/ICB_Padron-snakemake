@@ -80,7 +80,7 @@ colnames(case ) = c( "patient" , "snv" , "cna" , "expr" )
 annotation_tissue <- read.csv(file=file.path(annot_dir, 'curation_tissue.csv'))
 clin <- annotate_tissue(clin=clin, study='Padron', annotation_tissue=annotation_tissue, check_histo=FALSE)
 
-clin <- add_column(clin, unique_drugid='', .after='unique_tissueid')
+clin <- add_column(clin, treatmentid='', .after='tissueid')
 
 write.table( case , file = file.path(output_dir, "cased_sequenced.csv") , sep = ";" , quote = FALSE , row.names = FALSE)
 write.table( clin , file = file.path(output_dir, "CLIN.csv") , sep = ";" , quote = FALSE , row.names = FALSE)
